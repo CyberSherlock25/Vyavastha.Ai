@@ -1,5 +1,0 @@
-# Created at 2026-08-12T01:43:51.283
-Boot Manifest-JAR contains absolute paths in classpath 'E:\MIT\SEM-III\Project\Anumati.ai\anumati-backend\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-
