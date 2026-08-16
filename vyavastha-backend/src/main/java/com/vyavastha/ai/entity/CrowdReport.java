@@ -1,4 +1,4 @@
-package com.anumati.ai.entity;
+package com.vyavastha.ai.entity;
 
 import java.time.LocalDateTime;
 
