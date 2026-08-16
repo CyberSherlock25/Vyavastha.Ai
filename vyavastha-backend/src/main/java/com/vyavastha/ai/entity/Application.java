@@ -1,5 +1,5 @@
-package com.anumati.ai.entity;
+package com.vyavastha.ai.entity;
 
 public class Application {
-    
+   
 }
