@@ -1,8 +1,12 @@
 package com.vyavastha.ai.service;
 
+import com.vyavastha.ai.dto.auth.LoginRequest;
+import com.vyavastha.ai.dto.auth.LoginResponse;
 import com.vyavastha.ai.dto.auth.RegisterRequest;
 import com.vyavastha.ai.entity.Role;
 import com.vyavastha.ai.entity.User;
+
+import com.vyavastha.ai.exception.InvalidCredentialsException;
 import com.vyavastha.ai.repository.RoleRepository;
 import com.vyavastha.ai.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -24,9 +28,9 @@ public class AuthService {
     public User registerEventHost(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException(
-                    "User with this email already exists"
-            );
+            throw new InvalidCredentialsException(
+        "Invalid email or password"
+);
         }
 
         Role eventHostRole = roleRepository
@@ -46,5 +50,29 @@ public class AuthService {
         user.setRole(eventHostRole);
 
         return userRepository.save(user);
+    }
+
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Invalid email or password"
+                        )
+                );
+
+        if (!user.getPasswordHash().equals(request.getPassword())) {
+            throw new InvalidCredentialsException(
+        "Invalid email or password"
+);
+        }
+
+        return new LoginResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().getName()
+        );
     }
 }

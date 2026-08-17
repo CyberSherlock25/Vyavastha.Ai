@@ -1,5 +1,7 @@
 package com.vyavastha.ai.controller;
 
+import com.vyavastha.ai.dto.auth.LoginRequest;
+import com.vyavastha.ai.dto.auth.LoginResponse;
 import com.vyavastha.ai.dto.auth.RegisterRequest;
 import com.vyavastha.ai.dto.auth.RegisterResponse;
 import com.vyavastha.ai.entity.User;
@@ -35,5 +37,14 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginRequest request) {
+
+        LoginResponse response = authService.login(request);
+
+        return ResponseEntity.ok(response);
     }
 }
