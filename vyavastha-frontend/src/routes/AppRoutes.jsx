@@ -2,11 +2,12 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Navigate
+  Navigate,
 } from "react-router-dom";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import ProtectedRoute from "./ProtectedRoute";
 
 function Placeholder({ title }) {
   return (
@@ -39,17 +40,29 @@ function AppRoutes() {
 
         <Route
           path="/event-host"
-          element={<Placeholder title="Event Host Dashboard" />}
+          element={
+            <ProtectedRoute allowedRoles={["EVENT_HOST"]}>
+              <Placeholder title="Event Host Dashboard" />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/authority"
-          element={<Placeholder title="Authority Dashboard" />}
+          element={
+            <ProtectedRoute allowedRoles={["AUTHORITY"]}>
+              <Placeholder title="Authority Dashboard" />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/admin"
-          element={<Placeholder title="Admin Dashboard" />}
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Placeholder title="Admin Dashboard" />
+            </ProtectedRoute>
+          }
         />
 
         <Route

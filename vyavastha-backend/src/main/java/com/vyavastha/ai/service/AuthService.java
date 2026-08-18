@@ -5,10 +5,11 @@ import com.vyavastha.ai.dto.auth.LoginResponse;
 import com.vyavastha.ai.dto.auth.RegisterRequest;
 import com.vyavastha.ai.entity.Role;
 import com.vyavastha.ai.entity.User;
-
 import com.vyavastha.ai.exception.InvalidCredentialsException;
 import com.vyavastha.ai.repository.RoleRepository;
 import com.vyavastha.ai.repository.UserRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,21 +17,24 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthService(
             UserRepository userRepository,
-            RoleRepository roleRepository) {
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder) {
 
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User registerEventHost(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new InvalidCredentialsException(
-        "Invalid email or password"
-);
+                    "Invalid email or password"
+            );
         }
 
         Role eventHostRole = roleRepository
@@ -45,7 +49,12 @@ public class AuthService {
 
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
+
+        // Hash the password before storing it
+        user.setPasswordHash(
+                passwordEncoder.encode(request.getPassword())
+        );
+
         user.setPhone(request.getPhone());
         user.setRole(eventHostRole);
 
@@ -57,15 +66,19 @@ public class AuthService {
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new IllegalArgumentException(
+                        new InvalidCredentialsException(
                                 "Invalid email or password"
                         )
                 );
 
-        if (!user.getPasswordHash().equals(request.getPassword())) {
+        // Verify raw password against BCrypt hash
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPasswordHash()
+        )) {
             throw new InvalidCredentialsException(
-        "Invalid email or password"
-);
+                    "Invalid email or password"
+            );
         }
 
         return new LoginResponse(
