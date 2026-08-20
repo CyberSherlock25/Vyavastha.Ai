@@ -1,29 +1,66 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  getCurrentUser,
+  logoutUser,
+} from "../services/api/authService";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("vyavastha_user");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    return storedUser
-      ? JSON.parse(storedUser)
-      : null;
-  });
+  /*
+   * Check the server-side session when
+   * the React application starts.
+   */
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const currentUser = await getCurrentUser();
+
+        if (currentUser) {
+          setUser(currentUser);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to restore authentication session:",
+          error
+        );
+
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkSession();
+  }, []);
+
 
   function login(userData) {
-    localStorage.setItem(
-      "vyavastha_user",
-      JSON.stringify(userData)
-    );
-
     setUser(userData);
   }
 
-  function logout() {
-    localStorage.removeItem("vyavastha_user");
+
+async function logout() {
+  try {
+    await logoutUser();
+  } catch (error) {
+    console.error("Logout failed:", error);
+  } finally {
+   
     setUser(null);
   }
+}
 
   return (
     <AuthContext.Provider
@@ -32,6 +69,7 @@ export function AuthProvider({ children }) {
         login,
         logout,
         isAuthenticated: Boolean(user),
+        loading,
       }}
     >
       {children}

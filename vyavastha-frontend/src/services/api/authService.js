@@ -31,6 +31,10 @@ export async function loginUser(credentials) {
       headers: {
         "Content-Type": "application/json",
       },
+
+      // Allows browser to send/receive JSESSIONID
+      credentials: "include",
+
       body: JSON.stringify(credentials),
     }
   );
@@ -44,4 +48,47 @@ export async function loginUser(credentials) {
   }
 
   return data;
+}
+
+export async function getCurrentUser() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/auth/me`,
+    {
+      method: "GET",
+
+      // Sends JSESSIONID to Spring Boot
+      credentials: "include",
+    }
+  );
+
+  if (response.status === 401) {
+    return null;
+  }
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to get current user"
+    );
+  }
+
+  return data;
+}
+export async function logoutUser() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/auth/logout`,
+    {
+      method: "POST",
+
+
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok && response.status !== 401) {
+    throw new Error("Logout failed");
+  }
+
+  return true;
 }
