@@ -8,12 +8,20 @@ import {
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ProtectedRoute from "./ProtectedRoute";
+import { useAuth } from "../context/AuthContext";
 
 function Placeholder({ title }) {
+  const { logout } = useAuth();
+
   return (
     <div>
       <h1>{title}</h1>
+
       <p>This page is under development.</p>
+
+      <button onClick={logout}>
+        Logout
+      </button>
     </div>
   );
 }
