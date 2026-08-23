@@ -9,6 +9,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "../context/AuthContext";
+import AdminEvents from "../pages/Admin/AdminEvents";
 
 function Placeholder({ title }) {
   const { logout } = useAuth();
@@ -31,11 +32,13 @@ function AppRoutes() {
     <BrowserRouter>
       <Routes>
 
+        {/* Default */}
         <Route
           path="/"
           element={<Navigate to="/login" replace />}
         />
 
+        {/* Authentication */}
         <Route
           path="/login"
           element={<Login />}
@@ -46,6 +49,7 @@ function AppRoutes() {
           element={<Register />}
         />
 
+        {/* Event Host */}
         <Route
           path="/event-host"
           element={
@@ -55,6 +59,7 @@ function AppRoutes() {
           }
         />
 
+        {/* Authority */}
         <Route
           path="/authority"
           element={
@@ -64,6 +69,7 @@ function AppRoutes() {
           }
         />
 
+        {/* Admin Dashboard */}
         <Route
           path="/admin"
           element={
@@ -73,6 +79,17 @@ function AppRoutes() {
           }
         />
 
+        {/* Admin Events */}
+        <Route
+          path="/admin/events"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminEvents />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Unknown routes */}
         <Route
           path="*"
           element={<Navigate to="/login" replace />}
