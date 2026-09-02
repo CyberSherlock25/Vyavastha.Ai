@@ -5,24 +5,39 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import Landing from "../pages/Landing";
+
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+
 import ProtectedRoute from "./ProtectedRoute";
-import { useAuth } from "../context/AuthContext";
-import AdminEvents from "../pages/Admin/AdminEvents";
 
-function Placeholder({ title }) {
-  const { logout } = useAuth();
-
+function EventHostDashboard() {
   return (
-    <div>
-      <h1>{title}</h1>
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <h1 className="text-3xl font-bold">
+        Event Host Dashboard
+      </h1>
+    </div>
+  );
+}
 
-      <p>This page is under development.</p>
+function AuthorityDashboard() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <h1 className="text-3xl font-bold">
+        Government Authority Dashboard
+      </h1>
+    </div>
+  );
+}
 
-      <button onClick={logout}>
-        Logout
-      </button>
+function AdminDashboard() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <h1 className="text-3xl font-bold">
+        Admin Dashboard
+      </h1>
     </div>
   );
 }
@@ -32,13 +47,15 @@ function AppRoutes() {
     <BrowserRouter>
       <Routes>
 
-        {/* Default */}
+        {/* =========================
+            PUBLIC ROUTES
+        ========================= */}
+
         <Route
           path="/"
-          element={<Navigate to="/login" replace />}
+          element={<Landing />}
         />
 
-        {/* Authentication */}
         <Route
           path="/login"
           element={<Login />}
@@ -49,50 +66,61 @@ function AppRoutes() {
           element={<Register />}
         />
 
-        {/* Event Host */}
+
+        {/* =========================
+            EVENT HOST ROUTES
+        ========================= */}
+
         <Route
           path="/event-host"
           element={
             <ProtectedRoute allowedRoles={["EVENT_HOST"]}>
-              <Placeholder title="Event Host Dashboard" />
+              <EventHostDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* Authority */}
+
+        {/* =========================
+            AUTHORITY ROUTES
+        ========================= */}
+
         <Route
           path="/authority"
           element={
             <ProtectedRoute allowedRoles={["AUTHORITY"]}>
-              <Placeholder title="Authority Dashboard" />
+              <AuthorityDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* Admin Dashboard */}
+
+        {/* =========================
+            ADMIN ROUTES
+        ========================= */}
+
         <Route
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <Placeholder title="Admin Dashboard" />
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* Admin Events */}
-        <Route
-          path="/admin/events"
-          element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <AdminEvents />
-            </ProtectedRoute>
-          }
-        />
 
-        {/* Unknown routes */}
+        {/* =========================
+            UNKNOWN ROUTES
+        ========================= */}
+
         <Route
           path="*"
-          element={<Navigate to="/login" replace />}
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
         />
 
       </Routes>
